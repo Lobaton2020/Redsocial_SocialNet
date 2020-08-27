@@ -9,6 +9,6 @@ define("DB_PASSWORD", "");
 
 // definicion de contantes del proyecto
 define("URL_APP", dirname(__DIR__));
-define("URL_PROYECTO", "http://localhost/SocialNet/public/?url=");
-define("URL_PROYECTO_STATIC", "http://localhost/SocialNet/public/");
+define("URL_PROYECTO", $_SERVER["REQUEST_SCHEME"] . '://' . $_SERVER["HTTP_HOST"] . dirname(str_replace(basename($_SERVER["PHP_SELF"]), "", $_SERVER["PHP_SELF"])));
+define("URL_PROYECTO_STATIC", URL_PROYECTO . "/");
 define("NAME_PROYECTO", "Red Social");

@@ -29,12 +29,23 @@ class Message extends Base
         return $tipo;
     }
 
-    public function getMessages($datos)
+    public function getMessages($datos, $limit = 200)
     {
         $this->db->query("SELECT * FROM mensajes WHERE usuarioMando = :idusuariomanda AND  usuarios_idusuario = :idusuariorecibe
-                       OR usuarios_idusuario = :idusuariomanda AND  usuarioMando = :idusuariorecibe ORDER BY idmensaje ASC");
+                       OR usuarios_idusuario = :idusuariomanda AND  usuarioMando = :idusuariorecibe ORDER BY idmensaje DESC limit {$limit}");
         $this->db->bind(":idusuariorecibe", $datos["idusuariorecibe"]);
         $this->db->bind(":idusuariomanda", $datos["idusuariomanda"]);
+
+        return $this->db->registers();
+    }
+
+    public function getLastMessages($datos, $limit = 200)
+    {
+        $this->db->query("SELECT * FROM mensajes WHERE (usuarioMando = :idusuariomanda AND  usuarios_idusuario = :idusuariorecibe
+                       OR usuarios_idusuario = :idusuariomanda AND  usuarioMando = :idusuariorecibe) AND idmensaje > :idlastmessage ORDER BY idmensaje DESC limit {$limit}");
+        $this->db->bind(":idusuariorecibe", $datos["idusuariorecibe"]);
+        $this->db->bind(":idusuariomanda", $datos["idusuariomanda"]);
+        $this->db->bind(":idlastmessage", $datos["idlastmessage"]);
 
         return $this->db->registers();
     }
@@ -63,5 +74,4 @@ class Message extends Base
         $tipo = $this->db->execute() == true ? true : false;
         return $tipo;
     }
-
 }
