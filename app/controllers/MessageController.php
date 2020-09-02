@@ -89,17 +89,47 @@ class MessageController extends Controller
 
         ];
         if ($datos = $this->message->getMessages($datos)) {
-            echo json_encode($datos);
-        } else {
-            echo "false";
+            if (!empty($datos)) {
+                echo json_encode($datos);
+                return;
+            }
         }
+        $error = [
+            "type" => "error",
+            "description" => "recurso no encontrado",
+            "state" => 404
+        ];
+        echo json_encode($error);
+    }
+
+    public function getLastMessages($idusuario, $idlastmessage)
+    {
+        // $sec = 3;
+        $data = [];
+        $data = ["state" => 404];
+        // while ($sec-- != 0) {
+
+        $datos = [
+            "idusuariorecibe" => trim($idusuario),
+            "idlastmessage" => trim($idlastmessage),
+            "idusuariomanda" => trim($_SESSION["id"]),
+
+        ];
+        if ($datos = $this->message->getLastMessages($datos)) {
+            if (!empty($datos)) {
+                $data = $datos;
+                // break;
+            }
+        }
+        //     sleep(1);
+        // }
+        echo json_encode($data);
     }
 
     public function getChats()
     {
         if ($datos = $this->message->getChats($_SESSION["id"])) {
             echo count($datos);
-
         } else {
             echo "false";
         }

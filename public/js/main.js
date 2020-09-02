@@ -1,6 +1,7 @@
 // declaracion de variables y demas
 var valores_setinterval = new Array();
 var URL_PROYECTO = "";
+var lastidmessage = null;
 var idsetimeout = 1;
 var idsetimeout2 = 1;
 var booleanscroll = true;
@@ -77,49 +78,51 @@ if (document.getElementsByClassName("ver-publicacion")) {
     }
 }
 
-// ajuste de la altura de imagen de la publicacion
-if (document.getElementsByClassName("containera")) {
-    var e = document.getElementsByClassName("img-post-c");
-    var responsive = window.innerWidth;
+function resizeImagesPublication() {
 
-    for (let i = 0; i < e.length; i++) {
-        // if (e[i].getAttribute("data-resizable") == "true")
-        // var a = document.getElementsByClassName("crop")[i];
-        var a = document.getElementsByClassName("img-post")[i];
-        if (responsive <= 360) {
-            if (a.width < 400) {
-                e[i].style.minHeight = a.height + "px";
-                e[i].style.width = a.width + "px";
-                // a.style.height = a.scrollHeight + "px";
-            } else if (a.width < 600) {
-                e[i].style.minHeight = a.height / 1.7 + "px";
-                e[i].style.width = a.width / 1.7 + "px";
-            } else if (a.width < 1000) {
-                e[i].style.minHeight = a.height / 2.5 + "px";
-                e[i].style.width = a.width / 2.5 + "px";
+    // ajuste de la altura de imagen de la publicacion
+    if (document.getElementsByClassName("containera")) {
+        var e = document.getElementsByClassName("img-post-c");
+        var responsive = window.innerWidth;
+
+        for (let i = 0; i < e.length; i++) {
+            // if (e[i].getAttribute("data-resizable") == "true")
+            // var a = document.getElementsByClassName("crop")[i];
+            var a = document.getElementsByClassName("img-post")[i];
+            if (responsive <= 360) {
+                if (a.width < 400) {
+                    e[i].style.minHeight = a.height + "px";
+                    e[i].style.width = a.width + "px";
+                    // a.style.height = a.scrollHeight + "px";
+                } else if (a.width < 600) {
+                    e[i].style.minHeight = a.height / 1.7 + "px";
+                    e[i].style.width = a.width / 1.7 + "px";
+                } else if (a.width < 1000) {
+                    e[i].style.minHeight = a.height / 2.5 + "px";
+                    e[i].style.width = a.width / 2.5 + "px";
+                } else {
+                    e[i].style.minHeight = a.height / 3 + "px";
+                    e[i].style.width = a.width / 3 + "px";
+                }
             } else {
-                e[i].style.minHeight = a.height / 3 + "px";
-                e[i].style.width = a.width / 3 + "px";
-            }
-        } else {
-            if (a.width < 400) {
-                e[i].style.minHeight = a.height + "px";
-                e[i].style.width = a.width + "px";
-                // a.style.height = a.scrollHeight + "px";
-            } else if (a.width < 800) {
-                e[i].style.minHeight = a.height / 1.5 + "px";
-                e[i].style.width = a.width / 1.5 + "px";
-            } else if (a.width < 1000) {
-                e[i].style.minHeight = a.height / 2.5 + "px";
-                e[i].style.width = a.width / 2.5 + "px";
-            } else {
-                e[i].style.minHeight = a.height / 3 + "px";
-                e[i].style.width = a.width / 3 + "px";
+                if (a.width < 400) {
+                    e[i].style.minHeight = a.height + "px";
+                    e[i].style.width = a.width + "px";
+                    // a.style.height = a.scrollHeight + "px";
+                } else if (a.width < 800) {
+                    e[i].style.minHeight = a.height / 1.5 + "px";
+                    e[i].style.width = a.width / 1.5 + "px";
+                } else if (a.width < 1000) {
+                    e[i].style.minHeight = a.height / 2.5 + "px";
+                    e[i].style.width = a.width / 2.5 + "px";
+                } else {
+                    e[i].style.minHeight = a.height / 3 + "px";
+                    e[i].style.width = a.width / 3 + "px";
+                }
             }
         }
     }
 }
-
 // habilitar comentarios
 
 if (document.getElementsByClassName("cm")) {
@@ -357,94 +360,69 @@ function procesoAjaxgetMessages() {
         } else {
             data = this.responseText;
         }
-
         var textChat = document.getElementById("text-chat");
         var contentChat = "";
         var idusuario = chat.getAttribute("value");
 
-        for (let i = 0; i < data.length; i++) {
+        for (let i = data.length - 1; i >= 0; i--) {
             if (data[i].usuarioMando != idusuario) {
-                // console.log(data[i]);
-                contentChat += '<div class="text-right mensaje-right linear show "> ';
-                contentChat +=
-                    '<a  class="stop-setinterval mb-1 ml-1 float-left " id="actions_publication" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
-                contentChat += '<i class="fas fa-angle-down small"></i>';
-                contentChat += "</a>";
-                contentChat +=
-                    '<div class="dropdown-menu dropdown-menu-right" aria-labelledby="#actions_publication">';
-                contentChat += '<h6 class="dropdown-header">Opcion</h6>';
-                contentChat +=
-                    '<a class="eliminar-mensaje dropdown-item small " value="' +
-                    data[i].idmensaje +
-                    '"  href=""><i class="fas fa-trash"></i> Eliminar</a>';
-                contentChat += "</div>";
-                contentChat +=
-                    '<span class="p mr-2 ml-2">' + data[i].contenido + "</span>";
-                contentChat +=
-                    '<div class="small mr-2 ml-2 text-muted">' +
-                    getDatetime(data[i].fechaMensaje) +
-                    "</div>";
-
-                contentChat += "</div>";
+                contentChat += renderMessageChat(data[i].idmensaje, data[i].contenido, data[i].fechaMensaje);
             } else {
-                contentChat += '<div class="text-left mensaje-left">';
-                contentChat +=
-                    '<span class="p mr-2 ml-2">' + data[i].contenido + "</span>";
-                contentChat +=
-                    '<div class="small mr-2 ml-2 text-muted">' +
-                    getDatetime(data[i].fechaMensaje) +
-                    "</div>";
-                contentChat += "</div>";
+                contentChat += renderMessageChat(data[i].idmensaje, data[i].contenido, data[i].fechaMensaje, "other");
             }
         }
-        if (textChat.innerHTML != contentChat) {
-            textChat.innerHTML = contentChat;
-            if (booleanscroll) {
-                chat.scrollTo(0, chat.scrollHeight);
-                clearTimeout(idsetimeout2);
-            }
-            var i = 0;
+        console.log(data.length)
+        if (typeof data.state == "undefined") {
+            lastidmessage = data[0].idmensaje;
+        }
+        textChat.innerHTML = "";
+        textChat.innerHTML = contentChat;
+        if (booleanscroll) {
+            chat.scrollTo(0, chat.scrollHeight);
+            clearTimeout(idsetimeout2);
+        }
+        var i = 0;
 
-            chat.addEventListener("scroll", function(e) {
-                // VERIFICA PARA NO PARA EL CHAT AL ENVIAR UN SIMPLE MENSAJE
+        chat.addEventListener("scroll", function(e) {
+            // VERIFICA PARA NO PARA EL CHAT AL ENVIAR UN SIMPLE MENSAJE
 
-                if (this.scrollTop < this.scrollHeight * 0.95) {
-                    booleanscroll = false;
-                    if (i < 10) {
-                        i++;
-                        idsetimeout2 = setTimeout((e) => {
-                            booleanscroll = true;
-                        }, 10000);
-                    }
+            if (this.scrollTop < this.scrollHeight * 0.95) {
+                booleanscroll = false;
+                if (i < 10) {
+                    i++;
+                    idsetimeout2 = setTimeout((e) => {
+                        booleanscroll = true;
+                    }, 10000);
                 }
-            });
-
-            var stopinterval = document.getElementsByClassName("stop-setinterval");
-            for (let i = 0; i < stopinterval.length; i++) {
-                stopinterval[i].addEventListener("click", function() {
-                    limpiarSetInterval("all");
-                    idsetimeout = setTimeout(() => {
-                        activeClickElementClass();
-                        newSetInterval(1);
-                    }, 5000);
-                });
             }
+        });
 
-            var eliminarMensaje = document.getElementsByClassName("eliminar-mensaje");
-            for (let i = 0; i < eliminarMensaje.length; i++) {
-                eliminarMensaje[i].addEventListener("click", function(e) {
-                    ejecucionAjax(
-                        "/message/deleteMessage/" + this.getAttribute("value"),
-                        procesoAjaxdeleteMessage
-                    );
-                    // console.log(idsetimeout);
+        var stopinterval = document.getElementsByClassName("stop-setinterval");
+        for (let i = 0; i < stopinterval.length; i++) {
+            stopinterval[i].addEventListener("click", function() {
+                limpiarSetInterval("all");
+                idsetimeout = setTimeout(() => {
                     activeClickElementClass();
                     newSetInterval(1);
-
-                    e.preventDefault();
-                });
-            }
+                }, 5000);
+            });
         }
+
+        var eliminarMensaje = document.getElementsByClassName("eliminar-mensaje");
+        for (let i = 0; i < eliminarMensaje.length; i++) {
+            eliminarMensaje[i].addEventListener("click", function(e) {
+                ejecucionAjax(
+                    "/message/deleteMessage/" + this.getAttribute("value"),
+                    procesoAjaxdeleteMessage
+                );
+                // console.log(idsetimeout);
+                activeClickElementClass();
+                newSetInterval(1);
+
+                e.preventDefault();
+            });
+        }
+
     }
 }
 
@@ -501,7 +479,7 @@ function procesoAjaxBusquedaChats() {
 
 function ejecucionAjax(url, funcionAjax = function() {}, parametros = null) {
     var ajax = getAjax();
-    ajax.open("POST", "/public/?url=/" + url);
+    ajax.open("POST", "http://localhost/SocialNet/public/?url=/" + url);
     ajax.onreadystatechange = funcionAjax;
     ajax.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     ajax.send(parametros);
@@ -595,9 +573,15 @@ function newSetInterval(cont) {
 function getsetIntervalID() {
     var idusuario = document.getElementById("conversacion").getAttribute("value");
     var intervalID = setInterval(function() {
-        ejecucionAjax("message/getmessages/" + idusuario, procesoAjaxgetMessages);
+        if (lastidmessage == null) {
+            ejecucionAjax("message/getmessages/" + idusuario, procesoAjaxgetMessages);
+        } else {
+            ejecucionAjax("message/getLastMessages/" + idusuario + "/" + lastidmessage, procesoAjaxgetLastMessages);
+        }
         console.log("interval" + intervalID);
-    }, 1000);
+    }, 1600);
+    // 2s de demora en la peticion
+    // 1s de retrazo enel servidor
     return intervalID;
 }
 
@@ -625,6 +609,99 @@ function switchElementId(elemento, switchs) {
     var elemento = document.getElementById(elemento);
     elemento.style.display = switchs;
 }
+/**
+ * Update chat to Long Polling for to be most efficient
+ */
+
+
+function procesoAjaxgetLastMessages() {
+    if (this.readyState == 4 && this.status == 200) {
+        var data;
+        if (typeof this.responseText !== "undefined") {
+            data = JSON.parse(this.responseText);
+        } else {
+            data = this.responseText;
+        }
+        if (typeof data.state == "undefined") {
+
+            console.log(data)
+            var textChat = document.getElementById("text-chat");
+            var contentChat = "";
+            var idusuario = chat.getAttribute("value");
+            var soundActive = false;
+            for (let i = data.length - 1; i >= 0; i--) {
+
+                if (data[i].usuarioMando != idusuario) {
+                    contentChat += renderMessageChat(data[i].idmensaje, data[i].contenido, data[i].fechaMensaje);
+                } else {
+                    soundActive = true;
+                    contentChat += renderMessageChat(data[i].idmensaje, data[i].contenido, data[i].fechaMensaje, "other");
+                }
+
+            }
+            lastidmessage = data[0].idmensaje;
+            textChat.innerHTML += contentChat;
+            chat.scrollTo(0, chat.scrollHeight);
+            clearTimeout(idsetimeout2);
+            // sound
+            if (soundActive) {
+
+                let audio = document.createElement("audio");
+                audio.src = "http://sonidosmp3gratis.com/sounds/iphone-notificacion-"
+                audio.volume = 0.2;
+                audio.play()
+            }
+            if (booleanscroll) {
+
+                var i = 0;
+                chat.addEventListener("scroll", function(e) {
+                    // VERIFICA PARA NO PARA EL CHAT AL ENVIAR UN SIMPLE MENSAJE
+
+                    if (this.scrollTop < this.scrollHeight * 0.75) {
+                        booleanscroll = false;
+                        if (i < 10) {
+                            i++;
+                            idsetimeout2 = setTimeout((e) => {
+                                booleanscroll = true;
+                            }, 10000);
+                        }
+                    }
+                });
+
+                var stopinterval = document.getElementsByClassName("stop-setinterval");
+                for (let i = 0; i < stopinterval.length; i++) {
+                    stopinterval[i].addEventListener("click", function() {
+                        limpiarSetInterval("all");
+                        idsetimeout = setTimeout(() => {
+                            activeClickElementClass();
+                            newSetInterval(1);
+                        }, 5000);
+                    });
+                }
+
+                var eliminarMensaje = document.getElementsByClassName("eliminar-mensaje");
+                for (let i = 0; i < eliminarMensaje.length; i++) {
+                    eliminarMensaje[i].addEventListener("click", function(e) {
+                        ejecucionAjax(
+                            "/message/deleteMessage/" + this.getAttribute("value"),
+                            procesoAjaxdeleteMessage
+                        );
+                        // console.log(idsetimeout);
+                        activeClickElementClass();
+                        newSetInterval(1);
+
+                        e.preventDefault();
+                    });
+                }
+            }
+        }
+    }
+}
+
+
+/**
+ * End
+ */
 
 function llamadoFuncionesSetInterval() {
     ejecucionAjax("message/getChats/", procesoAjaxgetChatsNavbar);
@@ -636,6 +713,7 @@ switchElementClass("show-chat", "none");
 window.addEventListener("load", function(e) {
     activeClickElementClass();
     llamadoFuncionesSetInterval();
+    resizeImagesPublication();
 
     this.setInterval(function() {
         llamadoFuncionesSetInterval();
@@ -695,4 +773,43 @@ function getDatetime(fecha) {
     minutos = minutos < 10 ? "0" + minutos : minutos;
     hour = hora[datetime.getHours()] + ":" + minutos + ":" + segundos + meridiano;
     return fecha + " - " + hour;
+}
+/**
+ * @param type string check if the string is a message for me in the chat or other
+ */
+function renderMessageChat(id, content, date, type = "me") {
+    let contentChat = "";
+    if (type == "me") {
+        contentChat += '<div class="text-right mensaje-right linear show " id="' + id + '"> ';
+        contentChat +=
+            '<a  class="stop-setinterval mb-1 ml-1 float-left " id="actions_publication" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+        contentChat += '<i class="fas fa-angle-down small"></i>';
+        contentChat += "</a>";
+        contentChat +=
+            '<div class="dropdown-menu dropdown-menu-right" aria-labelledby="#actions_publication">';
+        contentChat += '<h6 class="dropdown-header">Opcion</h6>';
+        contentChat +=
+            '<a class="eliminar-mensaje dropdown-item small " value="' +
+            id +
+            '"  href=""><i class="fas fa-trash"></i> Eliminar</a>';
+        contentChat += "</div>";
+        contentChat +=
+            '<span class="p mr-2 ml-2">' + content + "</span>";
+        contentChat +=
+            '<div class="small mr-2 ml-2 text-muted">' +
+            getDatetime(date) +
+            "</div>";
+
+        contentChat += "</div>";
+    } else {
+        contentChat += '<div class="text-left mensaje-left" id="' + id + '">';
+        contentChat +=
+            '<span class="p mr-2 ml-2">' + content + "</span>";
+        contentChat +=
+            '<div class="small mr-2 ml-2 text-muted">' +
+            getDatetime(date) +
+            "</div>";
+        contentChat += "</div>";
+    }
+    return contentChat;
 }

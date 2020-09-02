@@ -282,7 +282,7 @@ INSERT INTO `privilegios` (`idPerfil`, `nombrePrivilegio`) VALUES
 (1, 'Administrador'),
 (2, 'Usuario');
 
-INSERT INTO tiposnotificaciones VALUES  (1,"Like", "le ha dado me musta a tu publicacion"),
+INSERT INTO tiposnotificaciones VALUES  (1,"Like", "le ha dado me gusta a tu publicacion"),
 										(2,"Comentario", "ha comentado tu publicacion"),
                                         (3,"Compartir", "ha compartido tu publicacion");
                                         

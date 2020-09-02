@@ -3,6 +3,7 @@ session_start();
 // llamamos las librerias
 spl_autoload_register(function ($files) {
     require_once "libs/" . $files . ".php";
+	    
 });
 // llamando al config
 require_once "config/config.php";
