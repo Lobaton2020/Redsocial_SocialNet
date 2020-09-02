@@ -78,49 +78,51 @@ if (document.getElementsByClassName("ver-publicacion")) {
     }
 }
 
-// ajuste de la altura de imagen de la publicacion
-if (document.getElementsByClassName("containera")) {
-    var e = document.getElementsByClassName("img-post-c");
-    var responsive = window.innerWidth;
+function resizeImagesPublication() {
 
-    for (let i = 0; i < e.length; i++) {
-        // if (e[i].getAttribute("data-resizable") == "true")
-        // var a = document.getElementsByClassName("crop")[i];
-        var a = document.getElementsByClassName("img-post")[i];
-        if (responsive <= 360) {
-            if (a.width < 400) {
-                e[i].style.minHeight = a.height + "px";
-                e[i].style.width = a.width + "px";
-                // a.style.height = a.scrollHeight + "px";
-            } else if (a.width < 600) {
-                e[i].style.minHeight = a.height / 1.7 + "px";
-                e[i].style.width = a.width / 1.7 + "px";
-            } else if (a.width < 1000) {
-                e[i].style.minHeight = a.height / 2.5 + "px";
-                e[i].style.width = a.width / 2.5 + "px";
+    // ajuste de la altura de imagen de la publicacion
+    if (document.getElementsByClassName("containera")) {
+        var e = document.getElementsByClassName("img-post-c");
+        var responsive = window.innerWidth;
+
+        for (let i = 0; i < e.length; i++) {
+            // if (e[i].getAttribute("data-resizable") == "true")
+            // var a = document.getElementsByClassName("crop")[i];
+            var a = document.getElementsByClassName("img-post")[i];
+            if (responsive <= 360) {
+                if (a.width < 400) {
+                    e[i].style.minHeight = a.height + "px";
+                    e[i].style.width = a.width + "px";
+                    // a.style.height = a.scrollHeight + "px";
+                } else if (a.width < 600) {
+                    e[i].style.minHeight = a.height / 1.7 + "px";
+                    e[i].style.width = a.width / 1.7 + "px";
+                } else if (a.width < 1000) {
+                    e[i].style.minHeight = a.height / 2.5 + "px";
+                    e[i].style.width = a.width / 2.5 + "px";
+                } else {
+                    e[i].style.minHeight = a.height / 3 + "px";
+                    e[i].style.width = a.width / 3 + "px";
+                }
             } else {
-                e[i].style.minHeight = a.height / 3 + "px";
-                e[i].style.width = a.width / 3 + "px";
-            }
-        } else {
-            if (a.width < 400) {
-                e[i].style.minHeight = a.height + "px";
-                e[i].style.width = a.width + "px";
-                // a.style.height = a.scrollHeight + "px";
-            } else if (a.width < 800) {
-                e[i].style.minHeight = a.height / 1.5 + "px";
-                e[i].style.width = a.width / 1.5 + "px";
-            } else if (a.width < 1000) {
-                e[i].style.minHeight = a.height / 2.5 + "px";
-                e[i].style.width = a.width / 2.5 + "px";
-            } else {
-                e[i].style.minHeight = a.height / 3 + "px";
-                e[i].style.width = a.width / 3 + "px";
+                if (a.width < 400) {
+                    e[i].style.minHeight = a.height + "px";
+                    e[i].style.width = a.width + "px";
+                    // a.style.height = a.scrollHeight + "px";
+                } else if (a.width < 800) {
+                    e[i].style.minHeight = a.height / 1.5 + "px";
+                    e[i].style.width = a.width / 1.5 + "px";
+                } else if (a.width < 1000) {
+                    e[i].style.minHeight = a.height / 2.5 + "px";
+                    e[i].style.width = a.width / 2.5 + "px";
+                } else {
+                    e[i].style.minHeight = a.height / 3 + "px";
+                    e[i].style.width = a.width / 3 + "px";
+                }
             }
         }
     }
 }
-
 // habilitar comentarios
 
 if (document.getElementsByClassName("cm")) {
@@ -711,6 +713,7 @@ switchElementClass("show-chat", "none");
 window.addEventListener("load", function(e) {
     activeClickElementClass();
     llamadoFuncionesSetInterval();
+    resizeImagesPublication();
 
     this.setInterval(function() {
         llamadoFuncionesSetInterval();
